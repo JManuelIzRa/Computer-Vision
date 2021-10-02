@@ -30,18 +30,18 @@ void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result)
     {
         for(int x = 0; x<image.cols; x++)
         {
-            for(int j = 0; j< kernel.rows; j++)
+            for(int j = -1; j< kernel.rows-1; j++)
             {
                 for(int i = -1; i<kernel.cols-1; i++)
                 {
-                    if( ( (x-1+i)>0 ) && ( (y-1+j)>0 ) /*&&  ( (x-i)<image.cols ) && ( (y-j)>image.rows )*/ )
+                    if( ( (x-1+i)>0 ) && ( (y-1+j)>0 ) /*&&  ( (x-1+i)<result.cols ) && ( (y-1+j)>result.rows ) */)
                     {
-                        sum += kernel.at<float>(cv::Point(j, i)) * image.at<uchar>(cv::Point(y-1+j, x-1+i));
+                        sum += kernel.at<float>((j+1), (i+1)) * image.at<uchar>( (y-j), (x-i) );
                     }
                 }
             }
 
-            result.at<float>(y, x) = sum;
+            result.at<uchar>(y, x) = sum;
             sum = 0.0;
         }
     }
