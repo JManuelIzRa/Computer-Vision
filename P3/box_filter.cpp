@@ -40,11 +40,11 @@ void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result)
             {
                 for(int i = -1; i<kernel.cols-1; i++)
                 {
-                    //if( ( (x-i)>0 ) && ( (y-j)>0 ) /*&&  ( (x-1+i)<result.cols ) && ( (y-1+j)>result.rows ) */)
-                    //{
+                    if( ( (x-i)>0 ) && ( (y-j)>0 ) /*&&  ( (x-1+i)<result.cols ) && ( (y-1+j)>result.rows ) */)
+                    {
                         sum += kernel.at<float>( (j+1), (i+1) ) * image.at<uchar>( (y-j), (x-i) );
                         //sum += kernel.at<float>(j, i) * image.at<uchar>(y-j+2*r, x-i+2*r);
-                    //}
+                    }
                 }
             }
 
