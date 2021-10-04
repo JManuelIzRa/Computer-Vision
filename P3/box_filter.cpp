@@ -5,7 +5,6 @@
 
 using namespace std;
 
-/*void makeBoxFilterKernel(cv::Mat image, cv::Mat &kernel, int size);*/
 void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result);
 
 void makeBoxFilterKernel(cv::Mat image, cv::Mat &kernel, int size)
@@ -25,9 +24,6 @@ void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result)
 {
     result.create(image.size(),image.type());
     float sum = 0.0;
-    
-    //std::cout << image.rows << std::endl;
-    //std::cout << image.cols << std::endl;
 
     int r = kernel.rows/2;
 
@@ -42,7 +38,6 @@ void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result)
                     if( ( (x-i)>0 ) && ( (y-j)>0 ) && ( (x-i)<result.cols ) && ( (y-j)<result.rows ) )
                     {
                         sum += kernel.at<float>( (j+r), (i+r) ) * image.at<uchar>( (y-j-1), (x-i-1) );
-                        //std::cout <<"SUM: " << sum << std::endl;
                     }
                 }
             }
@@ -51,9 +46,6 @@ void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result)
             sum = 0.0;
         }
     }
-    
-    cv::namedWindow("Result");
-    cv::imshow("Result", result);
 }
 
 
@@ -88,9 +80,6 @@ int main(int argc, char **argv)
             cerr<<"Error reading image"<<endl;
             return 0;
         }
-
-
-       //makeBoxFilterKernel(image, kernel, 3);
 
         applyKernel(image, kernel, result);
 
