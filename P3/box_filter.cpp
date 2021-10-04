@@ -76,7 +76,10 @@ int main(int argc, char **argv)
         cv::Mat image = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
 
         cv::Mat kernel = cv::Mat::zeros(size, size, CV_32FC1);
-        kernel = 1./9.;
+        
+        float k_size = size * size;
+        
+        kernel = 1./k_size;
 
         cv::Mat result;
 
