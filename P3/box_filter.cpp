@@ -7,19 +7,6 @@ using namespace std;
 
 void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result);
 
-void makeBoxFilterKernel(cv::Mat image, cv::Mat &kernel, int size)
-{
-    kernel = cv::Mat::zeros(cv::Size(size, size), CV_32F);
-
-    for(int y = 0; y<kernel.rows ; y++)
-    {
-        for(int x = 0; x<kernel.cols ; x++)
-        {
-            kernel.at<float>(y, x)= 1.0/(kernel.rows*kernel.cols);;
-        }
-    }
-}
-
 void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result)
 {
     result.create(image.size(),image.type());
