@@ -20,14 +20,14 @@ void makeBoxFilterKernel(cv::Mat image, cv::Mat &kernel, int size)
     }
 }
 
-void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result)
+void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
 {
-    result.create(image.size(),image.type());
+    result.create(img.size(),img.type());
     float sum = 0.0;
 
     //int r = kernel.rows/2;
 
-    for(int y = 1; y<result.rows-1; y++)
+    /*for(int y = 1; y<result.rows-1; y++)
     {
         for(int x = 1; x<result.cols-1; x++)
         {
@@ -46,6 +46,46 @@ void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result)
             result.at<uchar>(y, x) = sum;
             sum = 0.0;
         }
+    }*/
+
+    int sobel_x[3][3];
+    int sobel_y[3][3];
+
+    sobel_x[0][0] = -1; sobel_x[0][1] = 0; sobel_x[0][2] =1;
+    sobel_x[1][0] = -2; sobel_x[1][1] = 0; sobel_x[1][2] =2;
+    sobel_x[2][0] = -1; sobel_x[2][1] = 0; sobel_x[2][2] =1;
+
+    sobel_y[0][0] = -1; sobel_y[0][1] = -2; sobel_y[0][2] = -1;
+    sobel_y[1][0] = 0; sobel_y[1][1] = 0; sobel_y[1][2] = 0;
+    sobel_y[2][0] = 1; sobel_y[2][1] = 2; sobel_y[2][2] = 1;
+
+
+    for (int j = 0; j<img.rows-2; j++)
+    {
+        for (int i = 0; i<img.cols-2; i++)
+        {
+            int pixval_x =
+            (sobel_x[0][0] * (int)img.at<uchar>(j,i)) + (sobel_x[0][1] * (int)img.at<uchar>(j+1,i)) + (sobel_x[0][2] * (int)img.at<uchar>(j+2,i)) +
+            (sobel_x[1][0] * (int)img.at<uchar>(j,i+1)) + (sobel_x[1][1] * (int)img.at<uchar>(j+1,i+1)) + (sobel_x[1][2] * (int)img.at<uchar>(j+2,i+1)) +
+            (sobel_x[2][0] * (int)img.at<uchar>(j,i+2)) + (sobel_x[2][1] * (int)img.at<uchar>(j+1,i+2)) + (sobel_x[2][2] * (int)img.at<uchar>(j+2,i+2));   
+         
+            int pixval_y =
+            (sobel_y[0][0] * (int)result.at<uchar>(j,i)) + (sobel_y[0][1] * (int)result.at<uchar>(j+1,i)) + (sobel_y[0][2] * (int)result.at<uchar>(j+2,i)) +
+            (sobel_y[1][0] * (int)result.at<uchar>(j,i+1)) + (sobel_y[1][1] * (int)result.at<uchar>(j+1,i+1)) + (sobel_y[1][2] * (int)result.at<uchar>(j+2,i+1)) +
+            (sobel_y[2][0] * (int)result.at<uchar>(j,i+2)) + (sobel_y[2][1] * (int)result.at<uchar>(j+1,i+2)) + (sobel_y[2][2] * (int)result.at<uchar>(j+2,i+2));
+         
+            //There are few ways of doing it:
+            //sqrt( pow(X,2) + pow(Y, 2) )
+            //abs(X) + abs(Y)
+            int sum = sqrt( pow( pixval_x , 2 ) + pow( pixval_y , 2 ) )/*abs(pixval_x) + abs(pixval_y)*/;
+            
+            if (sum > 255)
+            {
+                sum = 255; //for best performance
+            }
+
+            result.at<uchar>(j,i) = sum;
+     }
     }
 }
 
