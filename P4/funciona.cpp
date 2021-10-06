@@ -33,47 +33,38 @@ void makeSobelFilterKernel(cv::Mat &kernel_x, cv::Mat &kernel_y, int size)
     }
 }
 
-void convolve(cv::Mat matrixX, cv::Mat matrixY, cv::Mat &result)
-{
-    float value = 0.0;
-    result.create(matrixX.size(),matrixX.type());
-
-    for(int y = 0; y<matrixX.rows-2; y++)
-    {
-        for(int x = 0; x<matrixY.rows-2; x++)
-        {
-            value = sqrt( pow( matrixX.at<float>(y,x) , 2 ) + pow( matrixY.at<float>(y,x) , 2 ) );
-
-            if (value > 255)
-            {
-                value = 255; //for best performance
-            }
-
-            result.at<float>(y,x) = value;
-            value = 0.0;
-        }
-    }
-
-}
-
-void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
+void applyKernel(cv::Mat img, cv::Mat kernel_x, cv::Mat kernel_y, cv::Mat &result)
 {
     result.create(img.size(),img.type());
     float sum = 0.0;
+
+    int value_x = 0;
+    int value_y = 0;
 
     for( int y = 0; y < img.rows-2; y++)
     {
         for( int x = 0; x < img.cols-2; x++ )
         {
-            for( int j = 0; j < kernel.rows; j++)
+            for( int j = 0; j < 3; j++)
             {
-                for(int i = 0; i < kernel.rows; i++)
+                for(int i = 0; i < 3; i++)
                 {
-                    sum += kernel.at<float>(j,i) * img.at<uchar>(y+i, x+j);
+                    value_x += kernel_x.at<float>(j,i) * img.at<uchar>(y+i, x+j);
+                    value_y += kernel_y.at<float>(j,i) * img.at<uchar>(y+i, x+j);
                 }
             }
 
+            sum = sqrt( pow( value_x , 2 ) + pow( value_y , 2 ) )/*abs(pixval_x) + abs(pixval_y)*/;
+        std::cout << "sum= " << sum << std::endl;
+            if (sum > 255)
+            {
+                sum = 255; //for best performance
+            }
+
             result.at<uchar>(y,x) = sum;
+
+            value_x = 0;
+            value_y = 0;
             sum = 0.0;
 
         }
@@ -108,9 +99,6 @@ int main(int argc, char **argv)
 
         makeSobelFilterKernel(kernelX, kernelY, 3);
         
-        cv::Mat resultX;
-        cv::Mat resultY;
-
         cv::Mat result;
 
         if(image.rows == 0)
@@ -119,11 +107,7 @@ int main(int argc, char **argv)
             return 0;
         }
 
-        applyKernel(image, kernelX, resultX);
-        applyKernel(image, kernelY, resultY);
-
-        convolve(resultX, resultY, result);
-
+        applyKernel(image, kernelX, kernelY, result);
 
         cv::namedWindow("Original Image");
         cv::imshow("Original Image", image);
