@@ -7,7 +7,7 @@ using namespace std;
 
 void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result);
 
-void makeSobelFilterKernel(cv::Mat image, cv::Mat &kernel_x, cv::Mat &kernel_y, int size)
+void makeSobelFilterKernel(cv::Mat &kernel_x, cv::Mat &kernel_y, int size)
 {
     kernel_x = cv::Mat::zeros(cv::Size(size, size), CV_32F);
     kernel_y = cv::Mat::zeros(cv::Size(size, size), CV_32F);
@@ -38,18 +38,6 @@ void applyKernel(cv::Mat img, cv::Mat kernel_x, cv::Mat kernel_y, cv::Mat &resul
     result.create(img.size(),img.type());
     float sum = 0.0;
 
-
-    int sobel_x[3][3];
-    int sobel_y[3][3];
-
-    sobel_x[0][0] = -1; sobel_x[0][1] = 0; sobel_x[0][2] =1;
-    sobel_x[1][0] = -2; sobel_x[1][1] = 0; sobel_x[1][2] =2;
-    sobel_x[2][0] = -1; sobel_x[2][1] = 0; sobel_x[2][2] =1;
-
-    sobel_y[0][0] = -1; sobel_y[0][1] = -2; sobel_y[0][2] = -1;
-    sobel_y[1][0] = 0; sobel_y[1][1] = 0; sobel_y[1][2] = 0;
-    sobel_y[2][0] = 1; sobel_y[2][1] = 2; sobel_y[2][2] = 1;
-
     int value_x = 0;
     int value_y = 0;
 
@@ -61,12 +49,12 @@ void applyKernel(cv::Mat img, cv::Mat kernel_x, cv::Mat kernel_y, cv::Mat &resul
             {
                 for(int i = 0; i < 3; i++)
                 {
-                    value_x += sobel_x[j][i] * img.at<uchar>(y+i, x+j);
-                    value_y += sobel_y[j][i] * result.at<uchar>(y+i, x+j);
+                    value_x += kernel_x.at<float>(j,i) * img.at<uchar>(y+i, x+j);
+                    value_y += kernel_y.at<float>(j,i) * result.at<uchar>(y+i, x+j);
                 }
             }
 
-            int sum = sqrt( pow( value_x , 2 ) + pow( value_y , 2 ) )/*abs(pixval_x) + abs(pixval_y)*/;
+            sum = sqrt( pow( value_x , 2 ) + pow( value_y , 2 ) )/*abs(pixval_x) + abs(pixval_y)*/;
         std::cout << "sum= " << sum << std::endl;
             if (sum > 255)
             {
@@ -77,6 +65,7 @@ void applyKernel(cv::Mat img, cv::Mat kernel_x, cv::Mat kernel_y, cv::Mat &resul
 
             value_x = 0;
             value_y = 0;
+            sum = 0.0;
 
         }
 
@@ -108,7 +97,7 @@ int main(int argc, char **argv)
         cv::Mat kernelX = cv::Mat::zeros(3, 3, CV_32FC1);
         cv::Mat kernelY = cv::Mat::zeros(3, 3, CV_32FC1);
 
-        
+        makeSobelFilterKernel(kernelX, kernelY, 3);
         
         cv::Mat result;
 
@@ -118,7 +107,7 @@ int main(int argc, char **argv)
             return 0;
         }
 
-        applyKernel(image, kernelX, result);
+        applyKernel(image, kernelX, kernelY, result);
 
         cv::namedWindow("Original Image");
         cv::imshow("Original Image", image);
