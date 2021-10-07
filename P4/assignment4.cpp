@@ -36,11 +36,11 @@ void makeSobelFilterKernel(cv::Mat &kernel_x, cv::Mat &kernel_y, int size)
 void convolve(cv::Mat matrixX, cv::Mat matrixY, cv::Mat &result)
 {
     float value = 0.0;
-    result.create(matrixX.size(),matrixX.type());
+    result.create(matrixX.size(),CV_32FC1);
 
     for(int y = 0; y<matrixX.rows-2; y++)
     {
-        for(int x = 0; x<matrixY.rows-2; x++)
+        for(int x = 0; x<matrixY.cols-2; x++)
         {
             value = sqrt( pow( matrixX.at<float>(y,x) , 2 ) + pow( matrixY.at<float>(y,x) , 2 ) );
 
@@ -58,9 +58,13 @@ void convolve(cv::Mat matrixX, cv::Mat matrixY, cv::Mat &result)
 
 void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
 {
-    result.create(img.size(),img.type());
+    result.create(img.size(),CV_32FC1);//Si la declaracion no es del mismo tipo que lo que luego
+    //usamos para asignar da una violacion de segmento en ejecucion
+    
     float sum = 0.0;
-
+    
+    img.convertTo(img, CV_32FC1);
+    
     for( int y = 0; y < img.rows-2; y++)
     {
         for( int x = 0; x < img.cols-2; x++ )
@@ -69,11 +73,11 @@ void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
             {
                 for(int i = 0; i < kernel.rows; i++)
                 {
-                    sum += kernel.at<float>(j,i) * img.at<uchar>(y+i, x+j);
+                    sum += kernel.at<float>(j,i) * img.at<float>(y+i, x+j);
                 }
             }
 
-            result.at<uchar>(y,x) = sum;
+            result.at<float>(y,x) = sum;
             sum = 0.0;
 
         }
@@ -92,22 +96,13 @@ int main(int argc, char **argv)
             return 0;
         }
 
-        int size = 0;
-
-        /*std::cout << "Introduce the filter size: ";
-        std::cin >> size;*/
-
-
         cv::Mat image = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
-        /*cv::Mat transformed = image.clone();
-
-        image.convertTo(transformed, CV_32FC1, 255, 0);*/
 
         cv::Mat kernelX = cv::Mat::zeros(3, 3, CV_32FC1);
         cv::Mat kernelY = cv::Mat::zeros(3, 3, CV_32FC1);
 
         makeSobelFilterKernel(kernelX, kernelY, 3);
-        
+
         cv::Mat resultX;
         cv::Mat resultY;
 
@@ -122,8 +117,10 @@ int main(int argc, char **argv)
         applyKernel(image, kernelX, resultX);
         applyKernel(image, kernelY, resultY);
 
+
         convolve(resultX, resultY, result);
 
+        result.convertTo(result, image.type());//Para que se muestre adecuadamente se debe usar uchar
 
         cv::namedWindow("Original Image");
         cv::imshow("Original Image", image);
