@@ -8,13 +8,11 @@ using namespace std;
 void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result);
 
 
-void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
+void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result, int boost_factor)
 {
     result.create(img.size(), CV_32FC1);
     
     float blur_factor = 0.0;
-
-    int boost_factor = 1;
 
     int r = kernel.rows/2;
 
@@ -67,6 +65,8 @@ int main(int argc, char **argv)
         
         kernel = 1./9.;
 
+        int boost_factor = 0;
+
         cv::Mat result;
 
         if(image.rows == 0)
@@ -74,8 +74,11 @@ int main(int argc, char **argv)
             cerr<<"Error reading image"<<endl;
             return 0;
         }
+        
+        std::cout << "Introduce the boost factor: ";
+        std::cin >> boost_factor;
 
-        applyKernel(image, kernel, result);
+        applyKernel(image, kernel, result, boost_factor);
 
         result.convertTo(result, image.type());//Para que se muestre adecuadamente se debe usar uchar
 
