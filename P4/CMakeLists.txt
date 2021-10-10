@@ -16,4 +16,3 @@ ENDIF()
 LINK_LIBRARIES(${OpenCV_LIBS} ${XRAND})
 
 add_executable(assignment4 assignment4.cpp)
-add_executable(funciona funciona.cpp)
