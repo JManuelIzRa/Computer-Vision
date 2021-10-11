@@ -20,6 +20,8 @@ void makeHighBoostFilter(cv::Mat &kernel, float boost_factor)
     }
 
     kernel.at<float>(1,1) = 8*boost_factor + 1;
+
+    cout << "kernel row: 0~3 = "<< endl << " "  << kernel.rowRange(0, 3) << endl << endl;
 }
 
 void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
@@ -51,6 +53,7 @@ void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
             value = 0.0;
         }
     }
+
 
 
 }
@@ -87,9 +90,9 @@ int main(int argc, char **argv)
 
         applyKernel(image, kernel, result);
 
-        cv::normalize(result, result, 1.0, 0.0, cv::NORM_MINMAX, CV_32FC1);
+        cv::normalize(result, result, 255.0, cv::NORM_MINMAX);
 
-        result.convertTo(result, image.type());//Para que se muestre adecuadamente se debe usar uchar
+        //cout << "result row: 0~3 = "<< endl << " "  << result.rowRange(0, 10) << endl << endl;
 
         cv::namedWindow("Original Image");
         cv::imshow("Original Image", image);
