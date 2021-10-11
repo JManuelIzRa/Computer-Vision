@@ -33,7 +33,7 @@ void makeSobelFilterKernel(cv::Mat &kernel_x, cv::Mat &kernel_y, int size)
     }
 }
 
-void convolve(cv::Mat matrixX, cv::Mat matrixY, cv::Mat &result)
+void combine(cv::Mat matrixX, cv::Mat matrixY, cv::Mat &result)
 {
     float value = 0.0;
     result.create(matrixX.size(),CV_32FC1);
@@ -118,7 +118,7 @@ int main(int argc, char **argv)
         applyKernel(image, kernelY, resultY);
 
 
-        convolve(resultX, resultY, result);
+        combine(resultX, resultY, result);
 
         result.convertTo(result, image.type());//Para que se muestre adecuadamente se debe usar uchar
 
