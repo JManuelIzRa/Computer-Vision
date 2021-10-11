@@ -5,7 +5,8 @@
 
 using namespace std;
 
-void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result, float boost_factor);
+void applyKernel(cv::Mat image, cv::Mat kernel, cv::Mat &result);
+void makeHighBoostFilter(cv::Mat &kernel, float boost_factor);
 
 void makeHighBoostFilter(cv::Mat &kernel, float boost_factor)
 {
@@ -54,8 +55,7 @@ void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
         }
     }
 
-
-
+    cv::normalize(result, result, 255.0, cv::NORM_MINMAX);
 }
 
 
@@ -90,7 +90,6 @@ int main(int argc, char **argv)
 
         applyKernel(image, kernel, result);
 
-        cv::normalize(result, result, 255.0, cv::NORM_MINMAX);
 
         //cout << "result row: 0~3 = "<< endl << " "  << result.rowRange(0, 10) << endl << endl;
 
@@ -99,6 +98,7 @@ int main(int argc, char **argv)
 
         cv::namedWindow("Result");
         cv::imshow("Result", result);
+
 
         cv::imwrite("result.jpg", result);
 
