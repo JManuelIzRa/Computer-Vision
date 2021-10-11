@@ -90,7 +90,19 @@ int main (int argc, char** argv)
         std::cout << "Introduce the filter size: ";
         std::cin >> size;
 
-        medianFilter( image, result, size );
+        
+        cv::Mat rgbchannel[3];
+        
+        cv::Mat resultB;
+        cv::Mat resultG;
+        cv::Mat resultR;
+
+
+        // The actual splitting.
+
+        split(image, rgbchannel); 
+
+        medianFilter( rgbchannel[0], result, size );
 
         cv::namedWindow("Original Image");
         cv::imshow("Original Image", image);
