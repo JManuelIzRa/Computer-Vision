@@ -17,8 +17,6 @@ void medianFilter(const cv::Mat &in,cv::Mat &out, int size)
 
     int filter_size = size*size;
 
-    float value = 0.0;
-
     std::vector<uchar> v(0, filter_size);
 
     for(int y = 1; y<out.rows-1; y++)
@@ -40,7 +38,6 @@ void medianFilter(const cv::Mat &in,cv::Mat &out, int size)
             //std::cout << "Pixel" << "(" << y << "," <<  x << "): " << v[size/2];
             out.at<uchar>(y,x) = v[filter_size/2];
 
-            value = 0.0;
             v.clear();
 
         }
