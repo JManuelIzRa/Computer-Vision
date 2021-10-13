@@ -12,55 +12,40 @@ bool sortFunction (int i,int j) { return (i<j); }
 //Using split function and merge one
 void medianFilter(const cv::Mat &in,cv::Mat &out, int size)
 {
-    out = in.clone();
+    out.create(in.size(), in.type());
 
     int r = size/2;
 
     int filter_size = size*size;
 
-    float value = 0.0;
-
-    std::vector<uchar> vB(0, filter_size);
-    std::vector<uchar> vG(0, filter_size);
-    std::vector<uchar> vR(0, filter_size);
+    std::vector<uchar> v(0, filter_size);
 
     for(int y = 1; y<out.rows-1; y++)
     {
         for(int x = 1; x<out.cols-1; x++)
         {
-            uchar *ptr_in = out.ptr<uchar>(y)+3*x;  
-
             for(int j = -r; j< size-r; j++)
             {
                 for(int i = -r; i<size-r; i++)
                 {
                     if( ( (x-i)>0 ) && ( (y-j)>0 ) && ( (x-i)<out.cols ) && ( (y-j)<out.rows ) )
                     {
-                        uchar *ptr_filter = out.ptr<uchar>(y-j-1)+3*(x-i-1);  
-
-                        vB.push_back(ptr_filter[0]);
-                        vG.push_back(ptr_filter[1]);
-                        vR.push_back(ptr_filter[2]);
+                        v.push_back( in.at<uchar>( (y-j-1), (x-i-1) ) );                   
                     }
                 }
             }
+            
+            std::sort (v.begin(), v.end(), sortFunction);
+            //std::cout << "Pixel" << "(" << y << "," <<  x << "): " << v[size/2];
+            out.at<uchar>(y,x) = v[filter_size/2];
 
-            std::sort (vB.begin(), vB.end(), sortFunction);
-            std::sort (vG.begin(), vG.end(), sortFunction);
-            std::sort (vR.begin(), vR.end(), sortFunction);
-
-            ptr_in[0] = vB[filter_size/2];
-            ptr_in[1] = vG[filter_size/2];
-            ptr_in[2] = vR[filter_size/2];
-
-            vB.clear();
-            vG.clear();
-            vR.clear();
+            v.clear();
 
         }
     }
 
-    //cv::normalize(out, out, 255, cv::NORM_MINMAX);
+    /*cv::namedWindow("MedianFilter");
+        cv::imshow("MedianFilter", out);*///cv::normalize(out, out, 255, cv::NORM_MINMAX);
 
 }
 
@@ -91,18 +76,17 @@ int main (int argc, char** argv)
         std::cin >> size;
 
         
-        cv::Mat rgbchannel[3];
+        cv::Mat bgrchannel[3];
         
-        cv::Mat resultB;
-        cv::Mat resultG;
-        cv::Mat resultR;
+        cv::Mat result_filter[3];
 
+        cv::split(image, bgrchannel);//We split the channels and store them on different Mats
 
-        // The actual splitting.
+        medianFilter( bgrchannel[0], result_filter[0], size );
+        medianFilter( bgrchannel[1], result_filter[1], size );
+        medianFilter( bgrchannel[2], result_filter[2], size );
 
-        split(image, rgbchannel); 
-
-        medianFilter( rgbchannel[0], result, size );
+        cv::merge(result_filter, 3, result);
 
         cv::namedWindow("Original Image");
         cv::imshow("Original Image", image);
