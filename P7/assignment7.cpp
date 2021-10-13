@@ -3,12 +3,16 @@
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "CMDLineParser.h"
 
 using namespace std;
 
 void threshold(cv::Mat in, int threshold_value, cv::Mat &out);
+void erode(cv::Mat in, int k, cv::Mat &out);
+bool sortFunction (int i,int j) { return (i<j); }
+
 
 void threshold(cv::Mat in, int threshold_value, cv::Mat &out)
 {
@@ -24,6 +28,39 @@ void threshold(cv::Mat in, int threshold_value, cv::Mat &out)
         }
 }
 
+void erode(cv::Mat in, int k, cv::Mat &out)
+{
+    out.create(in.size(), in.type());
+
+    int r = k/2;
+
+    int neighborhood = k*k;
+
+    std::vector<uchar> v(0, k*k);
+
+    for(int y = 1; y<in.rows-1; y++)
+    {
+        for(int x = 1; x<in.cols-1; x++)
+        {
+            for(int j = -r; j< out.rows-r; j++)
+            {
+                for(int i = -r; i<out.cols-r; i++)
+                {
+                    if( ( (x-i)>0 ) && ( (y-j)>0 ) && ( (x-i)<result.cols ) && ( (y-j)<result.rows ) )
+                    {
+                        v.push_back( in.at<uchar>( (y-j-1), (x-i-1) ) );
+                    }
+                }
+            }
+
+            std::sort (v.begin(), v.end(), sortFunction);
+            out.at<uchar>(y,x) = v[0];
+
+            v.clear();
+        }
+    }
+}
+
 int main ( int argc, char** argv)
 {
     
@@ -37,6 +74,7 @@ int main ( int argc, char** argv)
     
         cv::Mat image = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
         cv::Mat threshold_image;
+        cv::Mat morph_ops;
 
         if ( image.rows == 0 )
         {
@@ -64,6 +102,7 @@ int main ( int argc, char** argv)
             if ( option == "erode" )
             {
                 cout<<"erode option is in the command line\n";
+                erode(threshold_image, 4, morph_ops);
             }
             else if ( option == "dilate" )
             {
@@ -87,6 +126,9 @@ int main ( int argc, char** argv)
 
         cv::namedWindow("Threshold");
         cv::imshow("Threshold", threshold_image);
+
+        cv::namedWindow("Morph");
+        cv::imshow("Morph", morph_ops);
         
         cv::waitKey(0);
     }
