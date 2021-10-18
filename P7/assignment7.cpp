@@ -203,8 +203,8 @@ int main ( int argc, char** argv)
         cv::namedWindow("Threshold");
         cv::imshow("Threshold", threshold_image);
 
-        cv::namedWindow("Morph");
-        cv::imshow("Morph", morph_ops);
+        cv::namedWindow("Result");
+        cv::imshow("Result", morph_ops);
 
         cv::imwrite(argv[2], morph_ops);
         
