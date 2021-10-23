@@ -4,3 +4,6 @@ build
 *.jpeg
 ENTREGA
 *.PNG
+
+camaraPortatil.cpp
+video_camera.mp4
