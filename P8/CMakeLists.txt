@@ -16,4 +16,4 @@ ENDIF()
 LINK_LIBRARIES(${OpenCV_LIBS} ${XRAND})
 
 add_executable(calibration calibration.cpp)
-add_executable(camaraPotatil camaraPotatil.cpp)
+add_executable(augmented_reality augmented_reality.cpp)
