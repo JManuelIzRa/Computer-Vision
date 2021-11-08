@@ -79,4 +79,9 @@ void fsiv_segm_by_model(const cv::Mat & frame, cv::Mat & theMask, const cv::Mat 
 
 void fsiv_update_model(const cv::Mat & frame, cv::Mat & mean, cv::Mat & I2, cv::Mat &std,  float alpha, const cv::Mat & theMask);
 
+
+//Added by me
+void threshold(cv::Mat in, int threshold_value, cv::Mat &out);
+
+
 #endif

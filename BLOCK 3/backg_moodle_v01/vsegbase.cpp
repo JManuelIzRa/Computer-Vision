@@ -121,20 +121,34 @@ int main (int argc, char * const argv[])
   int key = 0;
 
 // WRITE ME 
+  cv::Mat prevFrame;
+  cv::Mat curFrame;
+  cv::Mat mask;
 
   cv::namedWindow("Input");
 
   while(input.grab() && waitKey(50) != 27)
   {
-    frameNumber++;
-    
-    input.retrieve(image);
+    if(frameNumber == 0)
+    {
+        input.retrieve(image);
+        curFrame = image.clone();
+        input.retrieve(image);
+        prevFrame = image.clone();
+    } 
+    else
+    {
+        curFrame = prevFrame.clone();
+        input.retrieve(image);
+        prevFrame = image.clone();
+    }
 
-
-    cv::imshow ("Input", image);    
+    cv::cvtColor(curFrame, curFrame, COLOR_BGR2GRAY);
+    cv::cvtColor(prevFrame, prevFrame, COLOR_BGR2GRAY);
      
 	 // Do your processing
 	 // TODO
+    fsiv_segm_by_dif(prevFrame, curFrame, mask, 11, 0);
 
 
     // TODO Apply the mask to the original frame and show
@@ -142,6 +156,9 @@ int main (int argc, char * const argv[])
     // Preparing the next iteration
 
     // TODO Add frame to output video
+
+    frameNumber++;
+    cv::imshow ("Input", curFrame);  
 
   }           
   return 0;
