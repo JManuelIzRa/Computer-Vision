@@ -16,3 +16,4 @@ ENDIF()
 LINK_LIBRARIES(${OpenCV_LIBS} ${XRAND})
 
 add_executable(assignment4 assignment4.cpp)
+add_executable(laplacian_filter laplacian_filter.cpp)
