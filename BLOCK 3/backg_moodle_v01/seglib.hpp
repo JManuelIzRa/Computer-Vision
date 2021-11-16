@@ -82,6 +82,9 @@ void fsiv_update_model(const cv::Mat & frame, cv::Mat & mean, cv::Mat & I2, cv::
 
 //Added by me
 void threshold(cv::Mat in, int threshold_value, cv::Mat &out);
-
+void erode(cv::Mat in, int k, cv::Mat &out);
+void dilate(cv::Mat in, int k, cv::Mat &out);
+bool sortFunction (int i,int j);
+bool sortFunctionMaxMin (int i, int j);
 
 #endif

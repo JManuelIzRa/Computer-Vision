@@ -91,7 +91,7 @@ int main (int argc, char * const argv[])
     abort();
   }
 
-  Mat inFrame, image;
+  Mat inFrame;
   bool wasOk = input.read(inFrame);
   if (!wasOk)
   {
@@ -110,7 +110,7 @@ int main (int argc, char * const argv[])
   std::cout << inFrame.size() << std::endl;
   VideoWriter output;
   
-  output.open(fileout, VideoWriter::fourcc('M','P','E','G'), fps, inFrame.size());
+  output.open(fileout, VideoWriter::fourcc('M','J','P','G'), fps, inFrame.size());
   if (!output.isOpened())
   {
     cerr << "Error: the ouput stream is not opened.\n";
@@ -121,34 +121,58 @@ int main (int argc, char * const argv[])
   int key = 0;
 
 // WRITE ME 
+
+  //cv::namedWindow("Output");
+  //cv::namedWindow("Input");
+  cv::Mat frame;
   cv::Mat prevFrame;
   cv::Mat curFrame;
   cv::Mat mask;
 
-  cv::namedWindow("Input");
+  
 
-  while(input.grab() && waitKey(50) != 27)
+  while(wasOk && key!=27 && input.grab())
   {
+    
+	  // Capture frame-by-frame
+
     if(frameNumber == 0)
     {
-        input.retrieve(image);
-        curFrame = image.clone();
-        input.retrieve(image);
-        prevFrame = image.clone();
+      input >> frame;
+      cv::cvtColor(frame, curFrame, COLOR_BGR2GRAY);
+
+      input >> frame;
+      cv::cvtColor(frame, prevFrame, COLOR_BGR2GRAY);
+
+        
     } 
     else
     {
-        curFrame = prevFrame.clone();
-        input.retrieve(image);
-        prevFrame = image.clone();
+      curFrame = prevFrame.clone();
+      input >> frame;
+      cv::cvtColor(frame, prevFrame, COLOR_BGR2GRAY);
+
     }
 
-    cv::cvtColor(curFrame, curFrame, COLOR_BGR2GRAY);
-    cv::cvtColor(prevFrame, prevFrame, COLOR_BGR2GRAY);
+    // If the frame is empty, break immediately
+    if (curFrame.empty() || prevFrame.empty())
+      break;
+
+	  // Display the resulting frame
+
+    imshow( "Current", curFrame );
+    /*imshow( "Previous", prevFrame );*/
+
+    frameNumber++;
+        
+    //  cv::imshow ("Input", inFrame);    
      
 	 // Do your processing
 	 // TODO
-    fsiv_segm_by_dif(prevFrame, curFrame, mask, 11, 0);
+    fsiv_segm_by_dif(prevFrame, curFrame, mask, 11, 5);
+    
+    /*imshow( "Mask", mask );*/
+
 
 
     // TODO Apply the mask to the original frame and show
@@ -156,9 +180,7 @@ int main (int argc, char * const argv[])
     // Preparing the next iteration
 
     // TODO Add frame to output video
-
-    frameNumber++;
-    cv::imshow ("Input", curFrame);  
+    cv::waitKey(10);
 
   }           
   return 0;
