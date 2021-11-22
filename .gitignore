@@ -2,6 +2,9 @@ build
 *.zip
 *.jpg
 *.jpeg
+*.avi
+*.mp4
+*.png
 ENTREGA
 *.PNG
 
