@@ -34,7 +34,7 @@ fsiv_normalize_mean_var(cv::Mat const& src)
     // its var equal to 1.0.
     // Hint: use cv::meanStdDev() to get the source mean and stdev.
 
-        cv::normalize ( src, dst, 1, 0, cv::NORM_L2, -1, cv::noArray() ); 		
+    cv::normalize ( src, dst, 1, 0, cv::NORM_L2, -1, cv::noArray() ); 		
 
     //
 #ifndef NDEBUG
@@ -58,7 +58,7 @@ fsiv_normalize_minmax(cv::Mat const& src)
     // maximun value be 1.0
     // Hint: use cv::normalize()
 
-
+    cv::normalize ( src, dst, 1.0, 0.0, cv::NORM_L2, -1, cv::noArray() ); 		
 
     //
 
@@ -319,3 +319,5 @@ compute_file_size(std::string const& fname, const long units)
     }
     return size;
 }
+
+

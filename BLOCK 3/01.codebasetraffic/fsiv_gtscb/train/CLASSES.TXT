@@ -1,0 +1,7 @@
+00001:p:prohibition
+00011:t:warning
+00012:d:diamond
+00013:T:giveway
+00014:h:stop
+00032:f:endprohibition
+00033:o:obligation
