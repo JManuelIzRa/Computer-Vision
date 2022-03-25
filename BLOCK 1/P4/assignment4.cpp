@@ -71,9 +71,9 @@ void applyKernel(cv::Mat img, cv::Mat kernel, cv::Mat &result)
         {
             for( int j = 0; j < kernel.rows; j++)
             {
-                for(int i = 0; i < kernel.rows; i++)
+                for(int i = 0; i < kernel.cols; i++)
                 {
-                    sum += kernel.at<float>(j,i) * img.at<float>(y+i, x+j);
+                    sum += kernel.at<float>(j,i) * img.at<float>(y+j, x+i);
                 }
             }
 

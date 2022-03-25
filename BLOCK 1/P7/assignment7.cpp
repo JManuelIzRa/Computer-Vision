@@ -83,7 +83,7 @@ void dilate(cv::Mat in, int k, cv::Mat &out)
             {
                 for(int i = -r; i< k-r; i++)
                 {
-                    if( ( (x-i)>0 ) && ( (y-j)>0 ) && ( (x-i)<out.cols ) && ( (y-j)<out.rows ) )
+                    if( ( (x-i)>=0 ) && ( (y-j)>=0 ) && ( (x-i)<=out.cols ) && ( (y-j)<=out.rows ) )
                     {
                         v.push_back( in.at<uchar>( (y-j-1), (x-i-1) ) );
                     }

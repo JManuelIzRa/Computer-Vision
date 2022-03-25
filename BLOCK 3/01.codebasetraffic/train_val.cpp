@@ -85,7 +85,7 @@ main (int argc, char* const* argv)
       float svm_G = parser.get<float>("svm_G");
       int rtrees_V = parser.get<int>("rtrees_V");
       int rtrees_T = parser.get<int>("rtrees_T");
-      double rtrees_E = parser.get<double>("rtrees_T");
+      double rtrees_E = parser.get<double>("rtrees_E");
       if (!parser.check())
       {
           parser.printErrors();
@@ -233,8 +233,12 @@ main (int argc, char* const* argv)
               //Set algorithm type to BRUTE_FORCE.
               //Set it as a classifier (setIsClassifier)
               //Set hyperparameter K.
-
-
+              
+              knn = cv::ml::KNearest::create();
+              
+              knn->setAlgorithmType(1); //BRUTE FORCE: 1; KDTREE: 2;
+              knn->setIsClassifier(true);
+              knn->setDefaultK(knn_K);
               //
               assert(knn != nullptr);
               clsf = knn;
@@ -246,9 +250,13 @@ main (int argc, char* const* argv)
               //Set algorithm type to C_SVC.
               //Set it as a classifier (setIsClassifier)
               //Set hyperparameters: C, kernel, Gamma, Degree.
+              svm = cv::ml::SVM::create();
 
-
-
+              svm->setType(cv::ml::SVM::C_SVC);
+              svm->setC(svm_C);
+              svm->setKernel(svm_K);
+              svm->setGamma(svm_G);
+              svm->setDegree(svm_D);
               //
               assert(svm!=nullptr);
               clsf = svm;
@@ -261,9 +269,11 @@ main (int argc, char* const* argv)
               //Remenber that rtrees_V=0 means to use the default value.
               //Set the max num of trees rtrees_T, and required OOB error rtrees_E
               //using a cv::TermCriteria object.
+              rtrees = cv::ml::RTrees::create();
 
-
-              //
+              rtrees->setActiveVarCount(rtrees_V);
+              rtrees->setTermCriteria({ cv::TermCriteria::COUNT, rtrees_T, rtrees_E });
+            //
               assert(rtrees!=nullptr);
               clsf = rtrees;
           }
@@ -278,15 +288,15 @@ main (int argc, char* const* argv)
           train_flags = cv::ml::StatModel::UPDATE_MODEL;
           if (classifier==0)
               //TODO: load a KNN classifier.
-              ;
+              clsf = cv::Algorithm::load<cv::ml::KNearest>("rtrees.yml") ;
               //
           else if (classifier==1)
               //TODO: load a SVM classifier.
-              ;
+              clsf = cv::Algorithm::load<cv::ml::SVM>("rtrees.yml") ;
               //
           else if (classifier==2)
               //TODO: load a RTrees classifier.
-              ;
+              clsf = cv::Algorithm::load<cv::ml::RTrees>("rtrees.yml") ;
               //
           else
           {
@@ -308,7 +318,8 @@ main (int argc, char* const* argv)
                                             train_labels);
 
           //TODO: train the classifer using training data.        
-          
+          clsf->train(train_data);
+          std::cout << "Trained" << std::endl;
 
           //
           assert(clsf->isTrained());
@@ -325,7 +336,7 @@ main (int argc, char* const* argv)
       std::cout << "done." << std::endl;
 
       //TODO: make the predictions over the validation/test data.
-
+      clsf->predict( , predict_labels, );
 
       //
       assert(!predict_labels.empty() && predict_labels.rows == val_descs.rows);

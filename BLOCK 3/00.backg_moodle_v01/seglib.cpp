@@ -201,7 +201,8 @@ void fsiv_apply_mask(const cv::Mat & frame, const cv::Mat & mask, cv::Mat & outf
 {
    // WRITE ME
    outframe.create( frame.size(), frame.type() );
-
+    cout << frame.size()<< " " << mask.size() <<" "<<outframe.size() <<endl;
+   cout << frame.type()<< " " << mask.type() <<" "<<outframe.type() <<endl;
    outframe = frame & mask;
 }
 

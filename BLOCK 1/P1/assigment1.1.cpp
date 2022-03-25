@@ -70,13 +70,15 @@ void on_mouse(int event, int x, int y, int flags, void* param)
             {
                 if( (x < xleft) || (x > xright) || (y < yleft) || (y > yright) )
                 {
-                    uchar *ptr = outImg.ptr<uchar>(y)+3*x;
+                    //uchar *ptr = outImg.ptr<uchar>(y)+3*x;
                     gray = 0;
-                    gray = (ptr[0] + ptr[1] + ptr[2])/3;
+                    //gray = (ptr[0] + ptr[1] + ptr[2])/3;
                     
-                    ptr[0] = gray;
-                    ptr[1] = gray;
-                    ptr[2] = gray;
+                    gray = (outImg.at<cv::Vec3b>(y,x)[0] + outImg.at<cv::Vec3b>(y,x)[1] + outImg.at<cv::Vec3b>(y,x)[2])/3;
+
+                    outImg.at<cv::Vec3b>(y,x)[0] = gray;
+                    outImg.at<cv::Vec3b>(y,x)[1] = gray;
+                    outImg.at<cv::Vec3b>(y,x)[2] = gray;
                 }
             }
 
